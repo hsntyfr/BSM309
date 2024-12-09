@@ -14,10 +14,10 @@ void girdiAl(char girdi[]);
 bool kontrol(char* argv[], int argc, char* karakterDizisi);
 void tekliKomutYurut(char* argv[], int argc, bool arkaplan);
 void komutYurutucu(char* argv[], int argc);
-//bool girisYonlendime(char* argv[], int argc);
-//bool cikisYonlendime(char* argv[], int argc);
-//void yonlendirme(char* argv[], int argc, char yon);
-//void sirali(char* argv[], int argc);
+bool girisYonlendime(char* argv[], int argc);
+bool cikisYonlendime(char* argv[], int argc);
+void yonlendirme(char* argv[], int argc, char yon);
+void sirali(char* argv[], int argc);
 
 
 
@@ -122,7 +122,7 @@ void komutYurutucu(char* argv[], int argc) {
             yonlendirme(argv, argc, '>');
         }
         else {
-            //sirali(argv, argc);
+            sirali(argv, argc);
         }
     } 
     else {
@@ -134,4 +134,74 @@ void komutYurutucu(char* argv[], int argc) {
     }
 }
 
+bool girisYonlendime(char* argv[], int argc){
+    for (int i = 0; i < argc; i++) {
+        if (strchr(argv[i], '<') != NULL) {
+            //printf("giriss\n");
 
+            return true; // Eğer herhangi bir tehlikeli karakter bulunursa true döner
+        }
+    }
+    return false;
+}
+bool cikisYonlendime(char* argv[], int argc){
+    for (int i = 0; i < argc; i++) {
+        if (strchr(argv[i], '>') != NULL) {
+            //printf("cikis\n");
+            return true; // Eğer herhangi bir tehlikeli karakter bulunursa true döner
+        }
+    }
+        return false;
+
+}
+
+void yonlendirme(char* argv[], int argc, char yon){
+    if (argc < 3)
+    {
+        printf("kodun calisabilmesi icin yeterli arguman yok\n");
+    }
+    
+    if (yon == '<')
+    {
+        printf("giris\n");
+
+    }
+    else {
+        printf("cikis\n");
+    }
+}
+
+void sirali(char* argv[], int argc){
+    bool baglantili = false;
+    for (int i = 0; i < argc; i++) {
+        if (strchr(argv[i], '|') != NULL) {
+            //printf("giris\n");
+
+            baglantili = true;
+            break;
+        }
+    }
+    if (baglantili == true)
+    {
+        
+        printf("| var\n");
+    }
+    else
+    {
+        //bosluk gorene kadar veya ; görene kadar tek argv ye al
+        for (int i = 0; i < argc; i++) {
+            char* noktalivirgul;
+            while ((noktalivirgul = strchr(argv[i], ';')) != NULL) {
+                memmove(noktalivirgul, noktalivirgul + 1, strlen(noktalivirgul));
+            }
+        }
+        komutYurutucu(argv, argc);
+
+        printf("; var\n");
+        komutlariYazdir(argv, &argc);
+
+    }
+    
+    
+
+}
