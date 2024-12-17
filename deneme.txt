@@ -1,1 +1,3 @@
-13
+13 make
+make
+bos gecmeli

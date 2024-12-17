@@ -69,6 +69,12 @@ void girdiBolucu(char* girdi, char* argv[], int* argc) {
     char* token = strtok(girdi, ayraclar);
 
     while (token != NULL) {
+        // Tırnak işaretlerini kaldır
+        if (token[0] == '\"' && token[strlen(token) - 1] == '\"') {
+            token[strlen(token) - 1] = '\0';  // Sağdaki tırnağı kaldır
+            token++;                         // Soldaki tırnağı atla
+        }
+        
         argv[(*argc)++] = token;
         if (*argc >= MAX_ARGUMAN_BOYUTU) {
             fprintf(stderr, "Argüman sayısı fazla!\n");
