@@ -1,7 +1,0 @@
-deneme.txt
-eg
-fe
-main
-main.c
-main.h
-makefile
