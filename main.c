@@ -8,29 +8,9 @@
 #include <errno.h> // Hata kontrolü için (errno != ECHILD)
 #include <fcntl.h>
 
-
-
 #include "main.h"
 #define MAX_GIRDI_BOYUTU 256
 #define MAX_ARGUMAN_BOYUTU 50
-
-// Fonksiyon bildirimleri
-void quit();
-void girdiBolucu(char* girdi, char* argv[], int* argc);
-void komutlariYazdir(char* argv[], int* argc);
-void girdiAl(char girdi[]);
-bool kontrol(char* argv[], int argc, char* karakterDizisi);
-void tekliKomutYurut(char* argv[], int argc, bool arkaplan);
-void komutYurutucu(char* argv[], int argc);
-void girisYonlendime(char* argv[], int argc); // Giriş yönlendirmesi kontrolü
-void cikisYonlendime(char* argv[], int argc);
-void sirali(char* argv[], int argc);
-void pipeKomutYurut(char* argv[], int argc);
-
-
-
-
-
 
 int main() {
     char girdi[MAX_GIRDI_BOYUTU];
@@ -91,9 +71,9 @@ void girdiBolucu(char* girdi, char* argv[], int* argc) {
 
 void komutlariYazdir(char* argv[], int* argc) {
     // Parçalanmış komutları yazdırır
-    printf("Toplam %d parça bulundu:\n", (*argc));
+    //printf("Toplam %d parça bulundu:\n", (*argc));
     for (int i = 0; i < *argc; i++) {
-        printf("argv[%d]: %s\n", i, argv[i]);
+        //printf("argv[%d]: %s\n", i, argv[i]);
     }
 }
 
@@ -117,7 +97,7 @@ bool kontrol(char* argv[], int argc, char* karakterDizisi) {
 }
 
 void tekliKomutYurut(char* argv[], int argc, bool arkaplan){
-    printf("tekliKomutYurut içerisindeyiz\n");
+    //printf("tekliKomutYurut içerisindeyiz\n");
     if(arkaplan){
             argv[argc-1]=NULL; // "&" karakterini NULL yapıyoruz çünk onu okuyunca hata veriyor.
     }
@@ -133,38 +113,38 @@ void tekliKomutYurut(char* argv[], int argc, bool arkaplan){
     else if(pid>0){
         if(arkaplan){
             // Arka plan işlem için mesaj yazdır
-            printf("[Arka Plan] PID: %d\n", pid);
+            //printf("[Arka Plan] PID: %d\n", pid);
         }
         else{
-            printf("Ana proses başladı. Alt PID: %d\n", pid);
+            //printf("Ana proses başladı. Alt PID: %d\n", pid);
             waitpid(pid, NULL, 0);  // Alt prosesin bitmesini bekle
             // bir prosesin (özellikle bir alt prosesin) tamamlanmasını beklemek için kullanılan bir sistem çağrısıdır.
-            printf("Alt süreç tamamlandı.\n");
+            //printf("Alt süreç tamamlandı.\n");
         }
     }
     else {
         perror("Fork -1 dönmüş , başarısız\n");
     }
-    printf("tekliKomutYurut methodu çıkış.\n");
+    //printf("tekliKomutYurut methodu çıkış.\n");
 }
 void quitAktifArkaPlanVarMi(){
     int status;
     pid_t pid;
-    printf("Arka plandaki işlemler kontrol ediliyor...\n");
+    //printf("Arka plandaki işlemler kontrol ediliyor...\n");
     while ((pid = waitpid(-1, &status, 0)) > 0) { // tüm arka plan işlemleri bitene kadar dön
         if (WIFEXITED(status)) { // Prosesin normal bir şekilde (başarıyla veya hatayla) tamamlandığını kontrol eder.
-            printf("[PID: %d] Tamamlandı, Çıkış Kodu: %d\n", pid, WEXITSTATUS(status)); // WEXITSTATUS(status) : Prosesin çıkış kodunu döner.
+            //printf("[PID: %d] Tamamlandı, Çıkış Kodu: %d\n", pid, WEXITSTATUS(status)); // WEXITSTATUS(status) : Prosesin çıkış kodunu döner.
         } else if (WIFSIGNALED(status)) { // Prosesin bir sinyal ile sonlandırılıp sonlandırılmadığını kontrol eder.
-            printf("[PID: %d] Sinyalle Sonlandı, Sinyal: %d\n", pid, WTERMSIG(status)); // WTERMSIG(status) : Prosesin sonlanmasına sebep olan sinyalin numarasını döner.
+            //printf("[PID: %d] Sinyalle Sonlandı, Sinyal: %d\n", pid, WTERMSIG(status)); // WTERMSIG(status) : Prosesin sonlanmasına sebep olan sinyalin numarasını döner.
         } else {
-        printf("[PID: %d] Tamamlanmamış veya beklenmeyen bir durum\n", pid);
+        //printf("[PID: %d] Tamamlanmamış veya beklenmeyen bir durum\n", pid);
         }
     }
     if (pid == -1 && errno != ECHILD) { // Hata durumu varsa bildir
-        perror("Arka plan işlemleri beklenirken bir hata oluştu");
+        //perror("Arka plan işlemleri beklenirken bir hata oluştu");
     }
 
-    printf("Tüm arka plan işlemleri tamamlandı.\n");
+    //printf("Tüm arka plan işlemleri tamamlandı.\n");
 }
 void aktifArkaPlanVarMi(){
     int status;
@@ -180,11 +160,11 @@ void aktifArkaPlanVarMi(){
           Eğer beklenen proses henüz tamamlanmadıysa, waitpid hemen geri döner ve programın başka işler yapmasına izin verir.
         */
         if (WIFEXITED(status)) { // Prosesin normal bir şekilde (başarıyla veya hatayla) tamamlandığını kontrol eder.
-            printf("[PID: %d] Tamamlandı, Çıkış Kodu: %d\n", pid, WEXITSTATUS(status)); // WEXITSTATUS(status) : Prosesin çıkış kodunu döner.
+            //printf("[PID: %d] Tamamlandı, Çıkış Kodu: %d\n", pid, WEXITSTATUS(status)); // WEXITSTATUS(status) : Prosesin çıkış kodunu döner.
         } else if (WIFSIGNALED(status)) { // Prosesin bir sinyal ile sonlandırılıp sonlandırılmadığını kontrol eder.
-            printf("[PID: %d] Sinyalle Sonlandı, Sinyal: %d\n", pid, WTERMSIG(status)); // WTERMSIG(status) : Prosesin sonlanmasına sebep olan sinyalin numarasını döner.
+            //printf("[PID: %d] Sinyalle Sonlandı, Sinyal: %d\n", pid, WTERMSIG(status)); // WTERMSIG(status) : Prosesin sonlanmasına sebep olan sinyalin numarasını döner.
         } else {
-        printf("[PID: %d] Tamamlanmamış veya beklenmeyen bir durum\n", pid);
+        //printf("[PID: %d] Tamamlanmamış veya beklenmeyen bir durum\n", pid);
         }
         
     }
@@ -213,7 +193,7 @@ void komutYurutucu(char* argv[], int argc) {
 void cikisYonlendime(char* argv[], int argc) {
     // Yeterli argüman olup olmadığını kontrol et
     if (argc < 3) {
-        fprintf(stderr, "Hatalı kullanım!\n");
+        //fprintf(stderr, "Hatalı kullanım!\n");
         return;  // Argüman sayısı yetersiz
     }
 
@@ -234,13 +214,13 @@ void cikisYonlendime(char* argv[], int argc) {
     // '>' ifadesinin ardından gelen dosya ismini alıyoruz
     if (i + 1 < argc) {
         char *outputFile = argv[i + 1];  // Dosya ismi
-        printf("Çıktı dosyaya yönlendirilecek: %s\n", outputFile);
+        //printf("Çıktı dosyaya yönlendirilecek: %s\n", outputFile);
 
         // Yeni bir süreç oluşturuyoruz
         pid_t pid = fork();
 
         if (pid == -1) {
-            perror("Fork hatası");
+            //perror("Fork hatası");
             return;
         }
 
@@ -248,7 +228,7 @@ void cikisYonlendime(char* argv[], int argc) {
             // Çıktıyı dosyaya yönlendirmek için dosyayı açıyoruz
             FILE *file = fopen(outputFile, "w");
             if (file == NULL) {
-                perror("Dosya açılamadı");
+                //perror("Dosya açılamadı");
                 exit(1);
             }
             // Standart çıktıyı dosyaya yönlendiriyoruz
@@ -266,13 +246,13 @@ void cikisYonlendime(char* argv[], int argc) {
             wait(NULL);
         }
     } else {
-        fprintf(stderr, "Hatalı kullanım! Yönlendirme dosyası belirtilmemiş.\n");
+        //fprintf(stderr, "Hatalı kullanım! Yönlendirme dosyası belirtilmemiş.\n");
     }
 }
 void girisYonlendime(char* argv[], int argc) {
     // Yeterli argüman olup olmadığını kontrol et
     if (argc < 3) {
-        fprintf(stderr, "Hatalı kullanım!\n");
+        //fprintf(stderr, "Hatalı kullanım!\n");
         return;  // Argüman sayısı yetersiz
     }
 
@@ -290,13 +270,13 @@ void girisYonlendime(char* argv[], int argc) {
     // '<' ifadesinin ardından gelen dosya ismini alıyoruz
     if (i + 1 < argc) {
         inputFile = argv[i + 1];  // Dosya ismi
-        printf("Girdi dosyasından veri alınacak: %s\n", inputFile);
+        //printf("Girdi dosyasından veri alınacak: %s\n", inputFile);
 
         // Yeni bir süreç oluşturuyoruz
         pid_t pid = fork();
 
         if (pid == -1) {
-            perror("Fork hatası");
+            //perror("Fork hatası");
             return;
         }
 
@@ -304,7 +284,7 @@ void girisYonlendime(char* argv[], int argc) {
             // Dosyayı okuma modunda açıyoruz
             int fd = open(inputFile, O_RDONLY);
             if (fd == -1) {
-                perror("Dosya açılamadı");
+                //perror("Dosya açılamadı");
                 exit(1);
             }
 
@@ -326,26 +306,10 @@ void girisYonlendime(char* argv[], int argc) {
             wait(NULL);
         }
     } else {
-        fprintf(stderr, "Hatalı kullanım! Girdi dosyası belirtilmemiş.\n");
+        //fprintf(stderr, "Hatalı kullanım! Girdi dosyası belirtilmemiş.\n");
     }
 }
 
-
-/*void yonlendirme(char* argv[], int argc, char yon){
-    if (argc < 3)
-    {
-        printf("kodun calisabilmesi icin yeterli arguman yok\n");
-    }
-    
-    if (yon == '<')
-    {
-        printf("giris\n");
-
-    }
-    else {
-        printf("cikis\n");
-    }
-}*/
 
 void sirali(char* argv[], int argc) {
     int start = 0;
@@ -456,4 +420,3 @@ void pipeKomutYurut(char* argv[], int argc) {
         wait(NULL);
 }
 }
-
